@@ -63,22 +63,73 @@ func main() {
 }
 
 func onConnectionButtonClick() {
-	fmt.Println("connection clicked!")
-	dialogContent := container.NewVBox(
-		widget.NewLabel("hello"),
+	dialogSize := fyne.NewSize(
+		300,
+		300,
 	)
-	dialog.ShowCustom(
-		"new connection form",
+
+	connectionNameLabel := widget.NewLabel(
+		"connection name:",
+	)
+	connectionNameEntry := widget.NewEntry()
+
+	hostnameLabel := widget.NewLabel(
+		"hostname:",
+	)
+	hostnameEntry := widget.NewEntry()
+
+	usernameLabel := widget.NewLabel(
+		"username:",
+	)
+	usernameEntry := widget.NewEntry()
+
+	passwordLabel := widget.NewLabel(
+		"password:",
+	)
+	passwordEntry := widget.NewPasswordEntry()
+
+	dialogContent := container.NewVBox(
+		container.NewMax(
+			container.NewGridWithColumns(
+				2,
+				connectionNameLabel,
+				connectionNameEntry,
+			),
+		),
+		container.NewMax(
+			container.NewGridWithColumns(
+				2,
+				hostnameLabel,
+				hostnameEntry,
+			),
+		),
+		container.NewMax(
+			container.NewGridWithColumns(
+				2,
+				usernameLabel,
+				usernameEntry,
+			),
+		),
+		container.NewMax(
+			container.NewGridWithColumns(
+				2,
+				passwordLabel,
+				passwordEntry,
+			),
+		),
+	)
+
+	dialog := dialog.NewCustom(
+		"New Connection",
 		"dismiss",
 		dialogContent,
 		window,
 	)
-	// dialog.ShowCustom(
-	// 	"new connection",
-	// 	"",
-	// 	container.NewVBox(),
-	// 	window,
-	// )
+	dialog.Resize(
+		dialogSize,
+	)
+
+	dialog.Show()
 }
 
 func onAboutButtonClick() {
