@@ -52,7 +52,7 @@ func CreateShortURLController(c *gin.Context) {
 		return
 	}
 
-	shortedUrl := fmt.Sprintf("https://myShortener.xyz/%s", shortenedRecord.hash)
+	shortedUrl := fmt.Sprintf("http://localhost:8080/r/%s", shortenedRecord.hash)
 
 	c.JSON(
 		http.StatusOK,

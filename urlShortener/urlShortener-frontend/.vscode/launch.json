@@ -5,11 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Package",
-            "type": "go",
+            "type": "chrome",
             "request": "launch",
-            "mode": "debug",
-            "program": "${workspaceFolder}"
+            "name": "Launch Chrome against localhost",
+            "url": "http://localhost:5173",
+            "webRoot": "${workspaceFolder}/urlShortener-frontend",
+            "runtimeArgs": [
+                "--disable-web-security"
+            ]
         }
     ]
 }

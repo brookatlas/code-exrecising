@@ -2,9 +2,11 @@ package urlShortenerApi
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"net/url"
+	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -27,6 +29,16 @@ type UrlShortenerDatabaseRecord struct {
 func validateURL(Url string) error {
 	_, err := url.ParseRequestURI(Url)
 	if err != nil {
+		return err
+	}
+
+	_, domain, hasDot := strings.Cut(Url, ".")
+	if hasDot == false {
+		err := errors.New("bad formatted url.")
+		return err
+	}
+	if len(domain) == 0 {
+		err := errors.New("domain is missing.")
 		return err
 	}
 
