@@ -1,4 +1,8 @@
 go 1.20
 
 use ./urlShortenerApi
-use ./urlShortener
+
+use (
+	./opensearch-client
+	./urlShortener
+)
