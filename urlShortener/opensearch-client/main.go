@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	"image/color"
 	"os"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
@@ -26,18 +28,11 @@ func main() {
 	a = app.New()
 	window = a.NewWindow(windowTitle)
 
-	windowSize := fyne.Size{
+	windowSize := fyne.NewSize(
 		float32(resolution.Width),
 		float32(resolution.Height),
-	}
+	)
 	window.Resize(windowSize)
-
-	// toolbarItems := []widget.ToolbarItem{
-	// 	widget.NewToolbarAction(widget.NewLabel("file"), func() {
-	// 		fmt.Println("file action!")
-	// 	}),
-	// }
-
 	toolbarItems := []fyne.CanvasObject{
 		widget.NewButton(
 			"connection",
@@ -50,10 +45,25 @@ func main() {
 	}
 
 	toolbarGridContainer := container.NewHBox(toolbarItems...)
+	connectionListWidget := widget.NewList(
+		func() int {
+			return 3
+		},
+		func() fyne.CanvasObject {
+			return widget.NewLabel("example connection")
+		},
+		func(lii widget.ListItemID, co fyne.CanvasObject) {},
+	)
+
+	connectionListBackgroundContainer := container.NewMax(
+		canvas.NewRectangle(color.RGBA{80, 80, 80, 255}),
+		connectionListWidget,
+	)
+
 	mainContainer := container.NewBorder(
 		toolbarGridContainer,
 		nil,
-		nil,
+		connectionListBackgroundContainer,
 		nil,
 	)
 
@@ -133,5 +143,18 @@ func onConnectionButtonClick() {
 }
 
 func onAboutButtonClick() {
-	fmt.Println("about was clicked!")
+
+	dialogContainer := container.NewMax(
+		widget.NewLabel(
+			"Opensearch Client by barak atias. \n version 0.1",
+		),
+	)
+	aboutDialog := dialog.NewCustom(
+		"About",
+		"close",
+		dialogContainer,
+		window,
+	)
+
+	aboutDialog.Show()
 }
