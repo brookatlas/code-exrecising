@@ -1,0 +1,4 @@
+go 1.21.2
+
+use ./redis-clone/redisclone
+use ./redis-clone/main

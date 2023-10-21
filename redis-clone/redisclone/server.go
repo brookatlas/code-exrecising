@@ -1,4 +1,4 @@
-package main
+package redisclone
 
 import (
 	"bytes"
@@ -9,19 +9,18 @@ import (
 	"strconv"
 )
 
-// use this for help: https://github.com/ngilles/codecrafters-redis-py/blob/master/app/main.py
-// https://coderwall.com/p/wohavg/creating-a-simple-tcp-server-in-go
-// https://codingchallenges.fyi/challenges/challenge-redis/
+type RedisCloneClient struct {
+	Host string
+	Port int
+}
 
-func main() {
+func (c RedisCloneClient) Run() {
 	connection_type := "tcp"
-	connection_port := 6379
-	connection_host := "localhost"
 
 	connection_string := fmt.Sprintf(
 		"%s:%d",
-		connection_host,
-		connection_port,
+		c.Host,
+		c.Port,
 	)
 	listener, err := net.Listen(
 		connection_type,
@@ -175,23 +174,4 @@ func readArray(buffer []byte) ([]string, int) {
 	}
 
 	return token_array, len(token_array)
-}
-
-func command(command_array []string) []byte {
-	initial_command := command_array[0]
-
-	switch initial_command {
-	case "DOCS":
-		return command_docs(command_array[1:])
-	default:
-		return []byte("*2\r\n$3\r\nSET\r\n$3\r\nGET")
-	}
-}
-
-func command_docs(command_array []string) []byte {
-	return []byte("*2\r\n$3\r\nSET\r\n%1\r\n$7\r\nsummary\r\n$4\r\nthis\r\n")
-}
-
-func ping() []byte {
-	return []byte("+PONG\r\n")
 }
