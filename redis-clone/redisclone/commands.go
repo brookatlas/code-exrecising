@@ -23,5 +23,7 @@ func command_docs(command_array []string) []byte {
 }
 
 func ping() []byte {
-	return []byte("+PONG\r\n")
+	response := writeSimpleString("PONG")
+
+	return response
 }
