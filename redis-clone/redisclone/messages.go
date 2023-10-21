@@ -95,3 +95,18 @@ func writeArray(string_array []string) []byte {
 
 	return []byte(builder.String())
 }
+
+func writeStringMap(mp map[string]string) []byte {
+	var builder strings.Builder
+	map_size_format := "%%d\r\n"
+	map_size_string := fmt.Sprintf(map_size_format, len(mp))
+	builder.Write([]byte(map_size_string))
+	for key, value := range mp {
+		current_key_bytes := writeBulkString(key)
+		builder.Write(current_key_bytes)
+		current_value_bytes := writeBulkString(value)
+		builder.Write(current_value_bytes)
+	}
+
+	return []byte(builder.String())
+}

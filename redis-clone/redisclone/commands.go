@@ -19,6 +19,12 @@ func command(command_array []string) []byte {
 }
 
 func command_docs(command_array []string) []byte {
+	// response_map := []string{
+	// 	map[string]string {
+	// 		SET: "summary",
+	// 	}
+	// }
+	// response := writeStringMap()
 	return []byte("*2\r\n$3\r\nSET\r\n%1\r\n$7\r\nsummary\r\n$4\r\nthis\r\n")
 }
 
