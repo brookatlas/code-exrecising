@@ -95,19 +95,6 @@ func writeRawArray(string_array []string) []byte {
 	return []byte(builder.String())
 }
 
-// func writeArray(string_array []string) []byte {
-// 	var builder strings.Builder
-// 	array_size_format := "*%d\r\n"
-// 	array_size_string := fmt.Sprintf(array_size_format, len(string_array))
-// 	builder.Write([]byte(array_size_string))
-// 	for _, str := range string_array {
-// 		current_bulk_string := writeBulkString(str)
-// 		builder.Write(current_bulk_string)
-// 	}
-
-// 	return []byte(builder.String())
-// }
-
 func writeStringMap(mp map[string]string) []byte {
 	var builder strings.Builder
 	map_size_format := "%%%d\r\n"
