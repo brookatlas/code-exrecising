@@ -1,5 +1,10 @@
 package redisclone
 
+import (
+	"fmt"
+	"log"
+)
+
 type RedisCloneCommandInfo struct {
 	CommandName    string
 	CommandSummary string
@@ -50,6 +55,84 @@ func command_docs(command_array []string) []byte {
 
 func ping() []byte {
 	response := writeSimpleString("PONG")
+
+	return response
+}
+
+func set(store *RedisCloneStore, command_array []string) []byte {
+	if len(command_array) < 3 {
+		return command_docs([]string{
+			"COMMAND",
+			"DOCS",
+			"SET",
+		})
+	}
+
+	key, value := command_array[1], command_array[2]
+
+	response_ok := store.StoreSet(key, value)
+
+	if !response_ok {
+		error_message_format := "error while setting a key called: %s"
+		error_message := fmt.Sprintf(error_message_format, key)
+
+		log.Fatal(error_message)
+		panic(1)
+	}
+
+	response := writeSimpleString("OK")
+
+	return response
+}
+
+func get(store *RedisCloneStore, command_array []string) []byte {
+	if len(command_array) < 2 {
+		return command_docs([]string{
+			"COMMAND",
+			"DOCS",
+			"GET",
+		})
+	}
+
+	key := command_array[1]
+
+	value := store.StoreGet(key)
+
+	response := writeSimpleString(value)
+
+	return response
+}
+
+func config(config *RedisCloneConfig, command_array []string) []byte {
+	if len(command_array) < 3 {
+		response := writeError("missing arguments")
+		return response
+	}
+
+	sub_command := command_array[1]
+	switch sub_command {
+	case "GET":
+		response := config_get(config, command_array)
+		return response
+	}
+
+	response := writeBulkString("unknown sub command")
+
+	return response
+}
+
+func config_get(config *RedisCloneConfig, command_array []string) []byte {
+	config_name := command_array[2]
+	switch config_name {
+	case "save":
+		response := writeRawArray(config.save)
+		return response
+	case "appendonly":
+		response := writeSimpleString(config.appendonly)
+		return response
+	}
+
+	response := writeError("unknown")
 
 	return response
 }

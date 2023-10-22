@@ -5,14 +5,42 @@ import (
 	"log"
 	"net"
 	"os"
+	"sync"
 )
 
 type RedisCloneClient struct {
-	Host string
-	Port int
+	Host   string
+	Port   int
+	Store  RedisCloneStore
+	Config RedisCloneConfig
 }
 
-func (c RedisCloneClient) Run() {
+type RedisCloneConfig struct {
+	save       []string
+	appendonly string
+}
+
+func NewRedisCloneClient(host string, port int) *RedisCloneClient {
+	redis_clone_client := RedisCloneClient{
+		Host: host,
+		Port: port,
+		Store: RedisCloneStore{
+			mu:   sync.RWMutex{},
+			dict: map[string]string{},
+		},
+		Config: RedisCloneConfig{
+			save: []string{
+				"60",
+				"1000",
+			},
+			appendonly: "no",
+		},
+	}
+
+	return &redis_clone_client
+}
+
+func (c *RedisCloneClient) Run() {
 	connection_type := "tcp"
 
 	connection_string := fmt.Sprintf(
@@ -46,11 +74,11 @@ func (c RedisCloneClient) Run() {
 			panic(err)
 		}
 
-		go handleRequest(connection)
+		go c.handleRequest(connection)
 	}
 }
 
-func handleRequest(connection net.Conn) {
+func (c *RedisCloneClient) handleRequest(connection net.Conn) {
 
 	for {
 		buffer := make([]byte, 1024)
@@ -68,11 +96,20 @@ func handleRequest(connection net.Conn) {
 		var response_pointer *[]byte
 
 		switch initial_command {
+		case "SET":
+			response := set(&c.Store, command_array)
+			response_pointer = &response
+		case "GET":
+			response := get(&c.Store, command_array)
+			response_pointer = &response
 		case "PING":
 			response := ping()
 			response_pointer = &response
 		case "COMMAND":
 			response := command(command_array[1:])
+			response_pointer = &response
+		case "CONFIG":
+			response := config(&c.Config, command_array)
 			response_pointer = &response
 		}
 
