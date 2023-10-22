@@ -83,22 +83,34 @@ func readArray(buffer []byte) ([]string, int) {
 	return token_array, len(token_array)
 }
 
-func writeArray(string_array []string) []byte {
+func writeRawArray(string_array []string) []byte {
 	var builder strings.Builder
 	array_size_format := "*%d\r\n"
 	array_size_string := fmt.Sprintf(array_size_format, len(string_array))
 	builder.Write([]byte(array_size_string))
 	for _, str := range string_array {
-		current_bulk_string := writeBulkString(str)
-		builder.Write(current_bulk_string)
+		builder.Write([]byte(str))
 	}
 
 	return []byte(builder.String())
 }
 
+// func writeArray(string_array []string) []byte {
+// 	var builder strings.Builder
+// 	array_size_format := "*%d\r\n"
+// 	array_size_string := fmt.Sprintf(array_size_format, len(string_array))
+// 	builder.Write([]byte(array_size_string))
+// 	for _, str := range string_array {
+// 		current_bulk_string := writeBulkString(str)
+// 		builder.Write(current_bulk_string)
+// 	}
+
+// 	return []byte(builder.String())
+// }
+
 func writeStringMap(mp map[string]string) []byte {
 	var builder strings.Builder
-	map_size_format := "%%d\r\n"
+	map_size_format := "%%%d\r\n"
 	map_size_string := fmt.Sprintf(map_size_format, len(mp))
 	builder.Write([]byte(map_size_string))
 	for key, value := range mp {
